@@ -1,6 +1,9 @@
-const greeting = (name: string): string => {
-  console.log(`Hello, ${name}!`);
-  return `Hello, ${name}!`;
-};
+import { app } from './app.js';
 
-greeting('world');
+const port = Number(process.env.PORT || 3000);
+
+const server = app;
+
+server.listen(port, () => {
+  console.log(`Server started at PORT : ${port}`);
+});
