@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 
 import { db } from './db/index.js';
 import { authRouter } from './auth/auth.routes.js';
+import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 
 export const app = express();
 
@@ -18,3 +19,6 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'error', db: 'down' });
   }
 });
+app.use(notFoundHandler);
+
+app.use(errorHandler);

@@ -1,7 +1,8 @@
-export class EmailAlreadyTakenError extends Error {
-  code = 'EMAIL_TAKEN';
+import { AppError } from '../errors/app-error.js';
+
+export class EmailAlreadyTakenError extends AppError {
   constructor() {
-    super('email is already taken');
+    super(409, 'EMAIL_TAKEN', 'email is already taken');
     this.name = 'EmailAlreadyTakenError';
   }
 }
