@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import * as argon2 from 'argon2';
+
 import { app } from '../../src/app.js';
 import { resetDb } from '../helpers/db.js';
 import { findUserByEmail } from '../../src/auth/auth.repository.js';
+import { db } from '../../src/db/index.js';
+import { users } from '../../src/db/schema.js';
 
 const validUser = {
   name: 'Test User',
@@ -98,5 +101,19 @@ describe('POST /auth/signup', () => {
     expect(await argon2.verify(user.passwordHashed, validUser.password)).toBe(
       true,
     );
+  });
+
+  it('creates a user and returns 409 for other user when both signup at the same time', async () => {
+    const [res1, res2] = await Promise.all([
+      request(app).post('/auth/signup').send(validUser),
+      request(app).post('/auth/signup').send(validUser),
+    ]);
+
+    const statuses = [res1.status, res2.status].sort((a, b) => a - b);
+
+    expect(statuses).toEqual([201, 409]);
+
+    const usersCount = await db.$count(users);
+    expect(usersCount).toBe(1);
   });
 });
