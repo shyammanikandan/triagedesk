@@ -8,7 +8,6 @@ export const notFoundHandler: RequestHandler = (_req, res) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  console.error(err);
   if (err instanceof AppError) {
     return res
       .status(err.statusCode)
@@ -29,6 +28,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
       },
     });
   }
+  console.error(err);
   return res.status(500).json({
     error: {
       code: 'INTERNAL_ERROR',
