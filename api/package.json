@@ -14,7 +14,8 @@
     "db:migrate": "drizzle-kit migrate",
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:seed": "tsx --env-file=../.env src/db/seed.ts"
   },
   "keywords": [],
   "author": "",

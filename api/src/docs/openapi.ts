@@ -7,6 +7,14 @@ export const openApiSpec = {
       'Support desk API: customers raise tickets, agents resolve them.',
   },
   components: {
+    securitySchemes: {
+      cookieAuth: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'access_token',
+        description: 'JWT set by POST /auth/login (httpOnly cookie).',
+      },
+    },
     schemas: {
       Error: {
         type: 'object',
@@ -200,6 +208,41 @@ export const openApiSpec = {
           '401': {
             description:
               'Wrong email or password (code: INVALID_CREDENTIALS). Same response for both, on purpose.',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Error' },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/auth/me': {
+      get: {
+        tags: ['Auth'],
+        summary: 'Get the logged-in user',
+        description:
+          'Returns the user identified by the `access_token` cookie. Used by the frontend on page load to restore the session.',
+        security: [{ cookieAuth: [] }],
+        responses: {
+          '200': {
+            description: 'The logged-in user',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    email: { type: 'string', format: 'email' },
+                    role: { type: 'string', enum: ['customer', 'agent'] },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description:
+              'Not logged in, invalid or expired token, or the user no longer exists (code: UNAUTHENTICATED)',
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/Error' },

@@ -50,3 +50,15 @@ export const createUser = async (data: UserInsert): Promise<PublicUser> => {
     throw err;
   }
 };
+
+export const findUserById = async (
+  id: string,
+): Promise<Pick<PublicUser, 'id' | 'email' | 'role'> | undefined> => {
+  const row = await db
+    .select({ id: users.id, email: users.email, role: users.role })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+
+  return row[0];
+};

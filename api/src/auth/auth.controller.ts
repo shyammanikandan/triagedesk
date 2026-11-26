@@ -2,9 +2,10 @@ import { z } from 'zod';
 
 import type { RequestHandler } from 'express';
 import { signUpSchema, logInSchema } from './auth.schemas.js';
-import { logIn, signUp } from './auth.service.js';
+import { getMe, logIn, signUp } from './auth.service.js';
 import { TOKEN_TTL_MS } from './auth.token.js';
 import { config } from '../config.js';
+import { UnauthenticatedError } from '../errors/unauthenticated-error.js';
 
 export const signUpController: RequestHandler = async (req, res) => {
   const result = signUpSchema.safeParse(req.body);
@@ -47,4 +48,13 @@ export const logInController: RequestHandler = async (req, res) => {
     maxAge: TOKEN_TTL_MS,
   });
   res.status(200).json(response.user);
+};
+
+export const meController: RequestHandler = async (req, res) => {
+  const id = req.user?.id;
+  if (id === undefined) {
+    throw new UnauthenticatedError();
+  }
+  const result = await getMe(id);
+  res.status(200).json(result);
 };
