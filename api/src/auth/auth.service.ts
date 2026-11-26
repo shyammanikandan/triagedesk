@@ -9,8 +9,10 @@ import {
   findUserByEmail,
   createUser,
   type PublicUser,
+  findUserById,
 } from './auth.repository.js';
 import { signToken } from './auth.token.js';
+import { UnauthenticatedError } from '../errors/unauthenticated-error.js';
 
 const DUMMY_HASH = await argon2.hash('any-placeholder-text');
 
@@ -51,4 +53,13 @@ export const logIn = async (input: LogInInput): Promise<LogInResult> => {
     user: { id, email, role },
     token,
   };
+};
+
+export const getMe = async (id: string): Promise<LogInResult['user']> => {
+  const result = await findUserById(id);
+
+  if (!result) {
+    throw new UnauthenticatedError();
+  }
+  return result;
 };

@@ -1,7 +1,7 @@
 import express from 'express';
 import { sql } from 'drizzle-orm';
 import swaggerUi from 'swagger-ui-express';
-
+import cookieParser from 'cookie-parser';
 import { openApiSpec } from './docs/openapi.js';
 import { db } from './db/index.js';
 import { authRouter } from './auth/auth.routes.js';
@@ -10,6 +10,7 @@ import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 export const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use('/auth', authRouter);
 
 app.get('/health', async (_req, res) => {
