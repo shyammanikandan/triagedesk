@@ -141,5 +141,73 @@ export const openApiSpec = {
         },
       },
     },
+    '/auth/login': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Log in',
+        description:
+          'Checks email and password. On success, sets the JWT in an httpOnly `access_token` cookie (valid 1 day). The token is never returned in the body.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['email', 'password'],
+                properties: {
+                  email: {
+                    type: 'string',
+                    format: 'email',
+                    example: 'ana@example.com',
+                  },
+                  password: { type: 'string', example: 'correct-horse-1' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Logged in',
+            headers: {
+              'Set-Cookie': {
+                description:
+                  'access_token=<JWT>; Max-Age=86400; Path=/; HttpOnly; SameSite=Lax (plus Secure in production)',
+                schema: { type: 'string' },
+              },
+            },
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    email: { type: 'string', format: 'email' },
+                    role: { type: 'string', enum: ['customer', 'agent'] },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Validation failed (code: VALIDATION_ERROR)',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Error' },
+              },
+            },
+          },
+          '401': {
+            description:
+              'Wrong email or password (code: INVALID_CREDENTIALS). Same response for both, on purpose.',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Error' },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 };

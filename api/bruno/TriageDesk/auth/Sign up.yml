@@ -5,16 +5,16 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/auth/signup"
+  url: '{{baseUrl}}/auth/signup'
   headers:
     - name: Content-Type
       value: application/json
   body:
     type: json
     data: |-
-      {"name":"Shyam M",
-      "email":"shyam1@test.com",
-      "password":"secret"}
+      {"name":"xyz",
+      "email":"xyz@test.com",
+      "password":"secret111"}
   auth: inherit
 
 settings:
