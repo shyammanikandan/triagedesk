@@ -1,6 +1,7 @@
 import { app } from './app.js';
+import { config } from './config.js';
 
-const port = Number(process.env.PORT || 3000);
+const port = config.PORT;
 
 const server = app;
 

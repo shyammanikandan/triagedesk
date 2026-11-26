@@ -1,6 +1,8 @@
 import express from 'express';
 import { sql } from 'drizzle-orm';
+import swaggerUi from 'swagger-ui-express';
 
+import { openApiSpec } from './docs/openapi.js';
 import { db } from './db/index.js';
 import { authRouter } from './auth/auth.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
@@ -19,6 +21,12 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'error', db: 'down' });
   }
 });
+
+app.get('/openapi.json', (_req, res) => {
+  res.json(openApiSpec);
+});
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+
 app.use(notFoundHandler);
 
 app.use(errorHandler);
